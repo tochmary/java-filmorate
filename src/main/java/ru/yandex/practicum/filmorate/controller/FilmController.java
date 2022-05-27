@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
@@ -23,6 +24,13 @@ public class FilmController {
     public List<Film> findAll() {
         return filmService.findAll();
     }
+
+    //GET /films/{id} — для получение фильма по id.
+    @GetMapping("/{id}")
+    public Film findById(@PathVariable Integer id) {
+        return filmService.findById(id);
+    }
+
 
     //POST /films — для добавления нового фильма в список.
     @PostMapping

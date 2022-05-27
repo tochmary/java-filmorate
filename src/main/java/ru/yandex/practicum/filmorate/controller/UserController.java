@@ -24,6 +24,12 @@ public class UserController {
         return userService.findAll();
     }
 
+    //GET /users/{id} — для получение пользователя gj id.
+    @GetMapping("/{id}")
+    public User findById(@PathVariable Integer id) {
+        return userService.findById(id);
+    }
+
     //POST /users — для добавления нового пользователя в список.
     @PostMapping
     public User create(@RequestBody User user) throws ValidationException {

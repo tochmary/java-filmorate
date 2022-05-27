@@ -23,6 +23,11 @@ public class UserService {
         return userStorage.findAll();
     }
 
+    public User findById(Integer id) {
+        checkUserForExist(id);
+        return userStorage.findById(id);
+    }
+
     public User create(User user) {
         checkUser(user);
         return userStorage.create(user);
@@ -30,10 +35,14 @@ public class UserService {
 
     public User update(User user) {
         checkUser(user);
-        if (!userStorage.isExistUser(user)) {
-            throw new NotFoundException("Пользователя с id = " + user.getId() + " не существует!");
-        }
+        checkUserForExist(user.getId());
         return userStorage.update(user);
+    }
+
+    private void checkUserForExist(Integer id) {
+        if (!userStorage.isExistUser(id)) {
+            throw new NotFoundException("Пользователя с id = " + id + " не существует!");
+        }
     }
 
     public static void checkUser(User user) {

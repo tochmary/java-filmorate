@@ -17,6 +17,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
+    public Film findById(Integer id) {
+        return films.get(id);
+    }
+
     public Film create(Film film) {
         int idFilm = generateId();
         film.setId(idFilm);
@@ -31,8 +35,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    public boolean isExistFilm(Film film) {
-        return films.containsKey(film.getId());
+    public boolean isExistFilm(Integer id) {
+        return films.containsKey(id);
     }
 
     private int generateId() {

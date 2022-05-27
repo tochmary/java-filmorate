@@ -17,6 +17,10 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
+    public User findById(Integer id) {
+        return users.get(id);
+    }
+
     public User create(User user) {
         int idUser = generateId();
         user.setId(idUser);
@@ -31,8 +35,8 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public boolean isExistUser(User user) {
-        return users.containsKey(user.getId());
+    public boolean isExistUser(Integer id) {
+        return users.containsKey(id);
     }
 
     private int generateId() {

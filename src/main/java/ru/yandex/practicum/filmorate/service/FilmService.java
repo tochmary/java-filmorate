@@ -23,6 +23,11 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
+    public Film findById(Integer id) {
+        checkFilmForExist(id);
+        return filmStorage.findById(id);
+    }
+
     public Film create(Film film) {
         checkFilm(film);
         return filmStorage.create(film);
@@ -30,10 +35,14 @@ public class FilmService {
 
     public Film update(Film film) {
         checkFilm(film);
-        if (!filmStorage.isExistFilm(film)) {
-            throw new NotFoundException("Фильма с id = " + film.getId() + " не существует!");
-        }
+        checkFilmForExist(film.getId());
         return filmStorage.update(film);
+    }
+
+    private void checkFilmForExist(Integer id) {
+        if (!filmStorage.isExistFilm(id)) {
+            throw new NotFoundException("Фильма с id = " + id + " не существует!");
+        }
     }
 
     public static void checkFilm(Film film) {
