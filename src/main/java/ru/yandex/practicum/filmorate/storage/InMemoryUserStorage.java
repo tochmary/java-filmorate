@@ -17,8 +17,8 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-    public User findById(Integer id) {
-        return users.get(id);
+    public Optional<User> findById(Integer id) {
+        return Optional.ofNullable(users.get(id));
     }
 
     public User create(User user) {
@@ -32,6 +32,18 @@ public class InMemoryUserStorage implements UserStorage {
     public User update(User user) {
         users.put(user.getId(), user);
         log.debug("Обновлен пользователь: {}", user);
+        return user;
+    }
+
+    public User addFriend(User user, Integer friendId) {
+        user.addFriend(friendId);
+        log.debug("Добавлен для пользователя c id {} друг с id {}", id, friendId);
+        return user;
+    }
+
+    public User deleteFriend(User user, Integer friendId) {
+        user.deleteFriend(friendId);
+        log.debug("Удален для пользователя c id {} друг с id {}", id, friendId);
         return user;
     }
 

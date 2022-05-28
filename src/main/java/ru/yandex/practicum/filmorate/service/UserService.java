@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -24,8 +25,9 @@ public class UserService {
     }
 
     public User findById(Integer id) {
-        checkUserForExist(id);
-        return userStorage.findById(id);
+        return userStorage.findById(id).orElseThrow(
+                () -> new NotFoundException("Пользователя с id = " + id + " не существует!")
+        );
     }
 
     public User create(User user) {
@@ -37,6 +39,40 @@ public class UserService {
         checkUser(user);
         checkUserForExist(user.getId());
         return userStorage.update(user);
+    }
+
+    public User addFriend(Integer id, Integer friendId) {
+        User user = findById(id);
+        User friend = findById(friendId);
+        userStorage.addFriend(user, friendId);
+        userStorage.addFriend(friend, id);
+        return user;
+    }
+
+    public User deleteFriend(Integer id, Integer friendId) {
+        User user = findById(id);
+        User friend = findById(friendId);
+        userStorage.deleteFriend(user, friendId);
+        userStorage.deleteFriend(friend, id);
+        return user;
+    }
+
+    public List<User> getFriends(Integer id) {
+        User user = findById(id);
+        return user.getFriends()
+                .stream()
+                .map(this::findById)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getCommonFriends(Integer id, Integer otherId) {
+        User user1 = findById(id);
+        User user2 = findById(otherId);
+        return user1.getFriends()
+                .stream()
+                .filter(user2.getFriends()::contains)
+                .map(this::findById)
+                .collect(Collectors.toList());
     }
 
     private void checkUserForExist(Integer id) {
