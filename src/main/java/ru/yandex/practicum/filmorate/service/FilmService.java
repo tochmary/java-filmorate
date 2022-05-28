@@ -9,14 +9,17 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
+        this.userService = userService;
     }
 
     public List<Film> findAll() {
@@ -24,8 +27,9 @@ public class FilmService {
     }
 
     public Film findById(Integer id) {
-        checkFilmForExist(id);
-        return filmStorage.findById(id);
+        return filmStorage.findById(id).orElseThrow(
+                () -> new NotFoundException("Фильма с id = " + id + " не существует!")
+        );
     }
 
     public Film create(Film film) {
@@ -39,10 +43,31 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    private void checkFilmForExist(Integer id) {
-        if (!filmStorage.isExistFilm(id)) {
-            throw new NotFoundException("Фильма с id = " + id + " не существует!");
-        }
+    public Film addLike(Integer id, Integer userId) {
+        Film film = findById(id);
+        userService.checkUserForExist(userId);
+        filmStorage.addLike(film, userId);
+        return film;
+    }
+
+    public Film deleteLike(Integer id, Integer userId) {
+        Film film = findById(id);
+        userService.checkUserForExist(userId);
+        filmStorage.deleteLike(film, userId);
+        return film;
+    }
+
+    public List<Film> getPopularFilms(Integer count) {
+        return filmStorage.findAll()
+                .stream()
+                .sorted(this::compare)
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    private int compare(Film f1, Film f2) {
+        return f2.getLike().size() - f1.getLike().size();
+
     }
 
     public static void checkFilm(Film film) {
@@ -58,6 +83,12 @@ public class FilmService {
         }
         if (film.getDuration() != null && film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной!");
+        }
+    }
+
+    public void checkFilmForExist(Integer id) {
+        if (!filmStorage.isExistFilm(id)) {
+            throw new NotFoundException("Фильма с id = " + id + " не существует!");
         }
     }
 }

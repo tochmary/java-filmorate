@@ -75,7 +75,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    private void checkUserForExist(Integer id) {
+    public void checkUserForExist(Integer id) {
         if (!userStorage.isExistUser(id)) {
             throw new NotFoundException("Пользователя с id = " + id + " не существует!");
         }

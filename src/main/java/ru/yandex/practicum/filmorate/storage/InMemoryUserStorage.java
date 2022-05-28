@@ -35,16 +35,14 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public User addFriend(User user, Integer friendId) {
+    public void addFriend(User user, Integer friendId) {
         user.addFriend(friendId);
         log.debug("Добавлен для пользователя c id {} друг с id {}", id, friendId);
-        return user;
     }
 
-    public User deleteFriend(User user, Integer friendId) {
+    public void deleteFriend(User user, Integer friendId) {
         user.deleteFriend(friendId);
         log.debug("Удален для пользователя c id {} друг с id {}", id, friendId);
-        return user;
     }
 
     public boolean isExistUser(Integer id) {
