@@ -45,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
         log.debug("Удален для пользователя c id {} друг с id {}", id, friendId);
     }
 
-    public boolean isExistUser(Integer id) {
+    public boolean isUserExist(Integer id) {
         return users.containsKey(id);
     }
 

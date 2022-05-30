@@ -21,14 +21,14 @@ public class FilmController {
 
     //GET /films — для получения списка фильмов.
     @GetMapping
-    public List<Film> findAll() {
-        return filmService.findAll();
+    public List<Film> getFilms() {
+        return filmService.getFilms();
     }
 
     //GET /films/{id} — для получение фильма по id.
     @GetMapping("/{id}")
-    public Film findById(@PathVariable Integer id) {
-        return filmService.findById(id);
+    public Film getFilmById(@PathVariable Integer id) {
+        return filmService.getFilmById(id);
     }
 
 

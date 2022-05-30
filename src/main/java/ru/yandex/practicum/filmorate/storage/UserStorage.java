@@ -18,5 +18,5 @@ public interface UserStorage {
 
     void deleteFriend(User user, Integer friendId);
 
-    boolean isExistUser(Integer id);
+    boolean isUserExist(Integer id);
 }

@@ -45,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.debug("Удален для фильма c id {} лайк пользователя с id {}", id, userId);
     }
 
-    public boolean isExistFilm(Integer id) {
+    public boolean isFilmExist(Integer id) {
         return films.containsKey(id);
     }
 

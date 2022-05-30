@@ -20,14 +20,14 @@ public class UserController {
 
     //GET /users — для получения списка пользователей.
     @GetMapping
-    public List<User> findAll() {
-        return userService.findAll();
+    public List<User> getUsers() {
+        return userService.getUsers();
     }
 
     //GET /users/{id} — для получение пользователя gj id.
     @GetMapping("/{id}")
-    public User findById(@PathVariable Integer id) {
-        return userService.findById(id);
+    public User getUserById(@PathVariable Integer id) {
+        return userService.getUserById(id);
     }
 
     //POST /users — для добавления нового пользователя в список.

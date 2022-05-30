@@ -18,5 +18,5 @@ public interface FilmStorage {
 
     void deleteLike(Film film, Integer userId);
 
-    boolean isExistFilm(Integer id);
+    boolean isFilmExist(Integer id);
 }

@@ -15,16 +15,34 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserStorage userStorage;
 
+    public static void checkUser(User user) {
+        String email = user.getEmail();
+        if (email == null || email.isBlank() || !email.contains("@")) {
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @!");
+        }
+        String login = user.getLogin();
+        if (login == null || login.isBlank() || login.contains(" ")) {
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
+        }
+        String name = user.getName();
+        if (name == null || name.isBlank()) {
+            user.setName(login);
+        }
+        if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем!");
+        }
+    }
+
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public List<User> findAll() {
+    public List<User> getUsers() {
         return userStorage.findAll();
     }
 
-    public User findById(Integer id) {
+    public User getUserById(Integer id) {
         return userStorage.findById(id).orElseThrow(
                 () -> new NotFoundException("Пользователя с id = " + id + " не существует!")
         );
@@ -42,60 +60,42 @@ public class UserService {
     }
 
     public User addFriend(Integer id, Integer friendId) {
-        User user = findById(id);
-        User friend = findById(friendId);
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
         userStorage.addFriend(user, friendId);
         userStorage.addFriend(friend, id);
         return user;
     }
 
     public User deleteFriend(Integer id, Integer friendId) {
-        User user = findById(id);
-        User friend = findById(friendId);
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
         userStorage.deleteFriend(user, friendId);
         userStorage.deleteFriend(friend, id);
         return user;
     }
 
     public List<User> getFriends(Integer id) {
-        User user = findById(id);
+        User user = getUserById(id);
         return user.getFriends()
                 .stream()
-                .map(this::findById)
+                .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        User user1 = findById(id);
-        User user2 = findById(otherId);
+        User user1 = getUserById(id);
+        User user2 = getUserById(otherId);
         return user1.getFriends()
                 .stream()
                 .filter(user2.getFriends()::contains)
-                .map(this::findById)
+                .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     public void checkUserForExist(Integer id) {
-        if (!userStorage.isExistUser(id)) {
+        if (!userStorage.isUserExist(id)) {
             throw new NotFoundException("Пользователя с id = " + id + " не существует!");
-        }
-    }
-
-    public static void checkUser(User user) {
-        String email = user.getEmail();
-        if (email == null || email.isBlank() || !email.contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @!");
-        }
-        String login = user.getLogin();
-        if (login == null || login.isBlank() || login.contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
-        }
-        String name = user.getName();
-        if (name == null || name.isBlank()) {
-            user.setName(login);
-        }
-        if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем!");
         }
     }
 }
