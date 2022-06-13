@@ -18,6 +18,23 @@ public class User {
      */
     private Set<Integer> friends = new HashSet<>();
 
+    public User() {
+    }
+
+    public User(Integer id,
+                String email,
+                String login,
+                String name,
+                LocalDate birthday,
+                Set<Integer> friends) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+        this.friends = friends;
+    }
+
     public void addFriend(Integer id) {
         friends.add(id);
     }

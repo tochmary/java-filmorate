@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -34,7 +35,7 @@ public class UserService {
     }
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -62,16 +63,20 @@ public class UserService {
     public User addFriend(Integer id, Integer friendId) {
         User user = getUserById(id);
         User friend = getUserById(friendId);
-        userStorage.addFriend(user, friendId);
-        userStorage.addFriend(friend, id);
+        if (!user.getFriends().contains(friendId)) {
+            userStorage.addFriend(user, friendId);
+            userStorage.addFriend(friend, id);
+        }
         return user;
     }
 
     public User deleteFriend(Integer id, Integer friendId) {
         User user = getUserById(id);
         User friend = getUserById(friendId);
-        userStorage.deleteFriend(user, friendId);
-        userStorage.deleteFriend(friend, id);
+        if (user.getFriends().contains(friendId)) {
+            userStorage.deleteFriend(user, friendId);
+            userStorage.deleteFriend(friend, id);
+        }
         return user;
     }
 

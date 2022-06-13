@@ -18,6 +18,23 @@ public class Film implements Comparable<Film> {
      */
     private Set<Integer> like = new HashSet<>();
 
+    public Film() {
+    }
+
+    public Film(Integer id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                Integer duration,
+                Set<Integer> like) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.like = like;
+    }
+
     public void addLike(Integer id) {
         like.add(id);
     }
