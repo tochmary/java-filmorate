@@ -9,13 +9,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.sql.*;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -57,8 +52,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sql = "INSERT INTO PUBLIC.USERS (EMAIL, LOGIN, NAME, BIRTHDAY)\n" +
-                "VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO PUBLIC.USERS (EMAIL, LOGIN, NAME, BIRTHDAY) VALUES (?, ?, ?, ?);";
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement(sql, new String[]{"id"});
@@ -82,31 +76,37 @@ public class UserDbStorage implements UserStorage {
                 "BIRTHDAY = ? " +
                 "WHERE id = ? ;";
         jdbcTemplate.update(sql,
-                user.getEmail(),user.getLogin(),user.getName(),user.getBirthday(),user.getId());
+                user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         user.setFriends(getFriendsById(user.getId()));
         return user;
     }
 
     @Override
     public void addFriend(User user, Integer friendId) {
-        String sql = "INSERT INTO PUBLIC.FRIENDS (USER_ID, FRIEND_ID)\n" +
-                "VALUES (?, ?);";
-        jdbcTemplate.update(sql,user.getId(),friendId);
+        String sql = "INSERT INTO PUBLIC.FRIENDS (USER_ID, FRIEND_ID) VALUES (?, ?);";
+        jdbcTemplate.update(sql, user.getId(), friendId);
         user.setFriends(getFriendsById(user.getId()));
     }
 
     @Override
-    public void deleteFriend(User user, Integer friendId) {
-        String sql = "DELETE FROM PUBLIC.FRIENDS " +
+    public void confirmFriend(User user, Integer friendId) {
+        String sql = "UPDATE PUBLIC.FRIENDS " +
+                "SET IS_CONFIRMED = ?" +
                 "WHERE USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql,user.getId(),friendId);
+        jdbcTemplate.update(sql, true, user.getId(), friendId);
+    }
+
+    @Override
+    public void deleteFriend(User user, Integer friendId) {
+        String sql = "DELETE FROM PUBLIC.FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        jdbcTemplate.update(sql, user.getId(), friendId);
         user.setFriends(getFriendsById(user.getId()));
     }
 
     public Set<Integer> getFriendsById(Integer id) {
         String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ? ";
         List<Integer> friends = jdbcTemplate.query(sql, (rs, rowNum) -> getFriendId(rs), id);
-        return friends.stream().collect(Collectors.toSet());
+        return new HashSet<>(friends);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     private Integer getFriendId(ResultSet rs) throws SQLException {
-       return rs.getInt("friend_id");
+        return rs.getInt("friend_id");
     }
 
 }

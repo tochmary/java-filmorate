@@ -65,7 +65,10 @@ public class UserService {
         User friend = getUserById(friendId);
         if (!user.getFriends().contains(friendId)) {
             userStorage.addFriend(user, friendId);
-            userStorage.addFriend(friend, id);
+        }
+        if (friend.getFriends().contains(id)) {
+            userStorage.confirmFriend(user, friendId);
+            userStorage.confirmFriend(friend, id);
         }
         return user;
     }

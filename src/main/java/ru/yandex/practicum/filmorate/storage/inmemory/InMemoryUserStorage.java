@@ -41,6 +41,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.debug("Добавлен для пользователя c id {} друг с id {}", id, friendId);
     }
 
+    @Override
+    public void confirmFriend(User user, Integer friendId) {
+    }
+
     public void deleteFriend(User user, Integer friendId) {
         user.deleteFriend(friendId);
         log.debug("Удален для пользователя c id {} друг с id {}", id, friendId);

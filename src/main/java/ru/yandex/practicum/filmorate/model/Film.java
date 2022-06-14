@@ -13,6 +13,8 @@ public class Film implements Comparable<Film> {
     private String description;
     private LocalDate releaseDate;
     private Integer duration;
+    private Mpa mpa;
+    private Set<Genre> genres;
     /**
      * Set if user ids who liked the film
      */
@@ -26,12 +28,16 @@ public class Film implements Comparable<Film> {
                 String description,
                 LocalDate releaseDate,
                 Integer duration,
+                Mpa mpa,
+                Set<Genre> genres,
                 Set<Integer> like) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
         this.like = like;
     }
 
