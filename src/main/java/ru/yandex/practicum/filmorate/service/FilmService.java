@@ -64,7 +64,7 @@ public class FilmService {
         Film film = getFilmById(id);
         userService.checkUserForExist(userId);
         if (!film.getLike().contains(userId)) {
-            filmStorage.addLike(film, userId);
+            filmStorage.addLike(id, userId);
         }
         return film;
     }
@@ -73,7 +73,7 @@ public class FilmService {
         Film film = getFilmById(id);
         userService.checkUserForExist(userId);
         if (film.getLike().contains(userId)) {
-            filmStorage.deleteLike(film, userId);
+            filmStorage.deleteLike(id, userId);
         }
         return film;
     }

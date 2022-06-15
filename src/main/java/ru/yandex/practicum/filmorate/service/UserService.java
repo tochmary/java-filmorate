@@ -64,11 +64,11 @@ public class UserService {
         User user = getUserById(id);
         User friend = getUserById(friendId);
         if (!user.getFriends().contains(friendId)) {
-            userStorage.addFriend(user, friendId);
+            userStorage.addFriend(id, friendId);
         }
         if (friend.getFriends().contains(id)) {
-            userStorage.confirmFriend(user, friendId);
-            userStorage.confirmFriend(friend, id);
+            userStorage.confirmFriend(id, friendId);
+            userStorage.confirmFriend(friendId, id);
         }
         return user;
     }
@@ -77,8 +77,8 @@ public class UserService {
         User user = getUserById(id);
         User friend = getUserById(friendId);
         if (user.getFriends().contains(friendId)) {
-            userStorage.deleteFriend(user, friendId);
-            userStorage.deleteFriend(friend, id);
+            userStorage.deleteFriend(id, friendId);
+            userStorage.deleteFriend(friendId, id);
         }
         return user;
     }

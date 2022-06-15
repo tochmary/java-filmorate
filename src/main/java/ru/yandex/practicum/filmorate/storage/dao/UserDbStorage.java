@@ -82,31 +82,41 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(User user, Integer friendId) {
+    public void addFriend(Integer userId, Integer friendId) {
         String sql = "INSERT INTO PUBLIC.FRIENDS (USER_ID, FRIEND_ID) VALUES (?, ?);";
-        jdbcTemplate.update(sql, user.getId(), friendId);
-        user.setFriends(getFriendsById(user.getId()));
+        jdbcTemplate.update(sql, userId, friendId);
+        findById(userId).get().setFriends(getFriendsById(userId));
     }
 
     @Override
-    public void confirmFriend(User user, Integer friendId) {
+    public void confirmFriend(Integer userId, Integer friendId) {
         String sql = "UPDATE PUBLIC.FRIENDS " +
                 "SET IS_CONFIRMED = ?" +
                 "WHERE USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql, true, user.getId(), friendId);
+        jdbcTemplate.update(sql, true, userId, friendId);
     }
 
     @Override
-    public void deleteFriend(User user, Integer friendId) {
+    public void deleteFriend(Integer userId, Integer friendId) {
         String sql = "DELETE FROM PUBLIC.FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql, user.getId(), friendId);
-        user.setFriends(getFriendsById(user.getId()));
+        jdbcTemplate.update(sql, userId, friendId);
+        findById(userId).get().setFriends(getFriendsById(userId));
     }
 
     public Set<Integer> getFriendsById(Integer id) {
-        String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ? ";
+        String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ?";
         List<Integer> friends = jdbcTemplate.query(sql, (rs, rowNum) -> getFriendId(rs), id);
         return new HashSet<>(friends);
+    }
+
+    public Boolean getStatusFriends(Integer userId, Integer friendId) {
+        Boolean isConfirmed = null;
+        String sql = "SELECT IS_CONFIRMED FROM PUBLIC.FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        List<Boolean> isConfirmedList = jdbcTemplate.query(sql, (rs, rowNum) -> getStatusFriends(rs), userId, friendId);
+        if (!isConfirmedList.isEmpty()) {
+            isConfirmed = isConfirmedList.get(0);
+        }
+        return isConfirmed;
     }
 
     @Override
@@ -127,6 +137,10 @@ public class UserDbStorage implements UserStorage {
 
     private Integer getFriendId(ResultSet rs) throws SQLException {
         return rs.getInt("friend_id");
+    }
+
+    private Boolean getStatusFriends(ResultSet rs) throws SQLException {
+        return rs.getBoolean("is_confirmed");
     }
 
 }

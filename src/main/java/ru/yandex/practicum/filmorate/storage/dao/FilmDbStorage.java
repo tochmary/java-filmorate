@@ -73,7 +73,7 @@ public class FilmDbStorage implements FilmStorage {
             ps.setString(2, film.getDescription());
             ps.setString(3, film.getReleaseDate().toString());
             ps.setInt(4, film.getDuration());
-            ps.setObject(5, film.getMpa().getId());
+            ps.setObject(5, film.getMpa() == null ? null : film.getMpa().getId());
             return ps;
         }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
@@ -112,17 +112,17 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(Film film, Integer userId) {
+    public void addLike(Integer filmId, Integer userId) {
         String sql = "INSERT INTO PUBLIC.LIKES (FILM_ID, USER_ID) VALUES (?, ?);";
-        jdbcTemplate.update(sql, film.getId(), userId);
-        film.setLike(getLikesById(film.getId()));
+        jdbcTemplate.update(sql, filmId, userId);
+        findById(filmId).get().setLike(getLikesById(filmId));
     }
 
     @Override
-    public void deleteLike(Film film, Integer userId) {
+    public void deleteLike(Integer filmId, Integer userId) {
         String sql = "DELETE FROM PUBLIC.LIKES WHERE FILM_ID = ? AND USER_ID = ?;";
-        jdbcTemplate.update(sql, film.getId(), userId);
-        film.setLike(getLikesById(film.getId()));
+        jdbcTemplate.update(sql, filmId, userId);
+        findById(filmId).get().setLike(getLikesById(filmId));
     }
 
     public Set<Integer> getLikesById(Integer id) {
