@@ -24,8 +24,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.USERS ORDER BY ID";
+        String sql = "SELECT * FROM PUBLIC.USERS ORDER BY ID;";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
         users.forEach(u -> u.setFriends(getFriendsById(u.getId())));
         return users;
@@ -33,11 +32,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> findById(Integer id) {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.USERS WHERE ID = ?";
+        String sql = "SELECT * FROM PUBLIC.USERS WHERE ID = ?;";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id);
 
-        // обрабатываем результат выполнения запроса
         if (users.isEmpty()) {
             log.info("Пользователь с идентификатором {} не найден.", id);
             return Optional.empty();
@@ -70,11 +67,11 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User update(User user) {
         String sql = "UPDATE PUBLIC.USERS " +
-                "SET EMAIL = ? ," +
-                "LOGIN = ? ," +
-                "NAME = ? , " +
+                "SET EMAIL = ?, " +
+                "LOGIN = ?, " +
+                "NAME = ?, " +
                 "BIRTHDAY = ? " +
-                "WHERE id = ? ;";
+                "WHERE id = ?;";
         jdbcTemplate.update(sql,
                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         user.setFriends(getFriendsById(user.getId()));
@@ -85,26 +82,26 @@ public class UserDbStorage implements UserStorage {
     public void addFriend(Integer userId, Integer friendId) {
         String sql = "INSERT INTO PUBLIC.FRIENDS (USER_ID, FRIEND_ID) VALUES (?, ?);";
         jdbcTemplate.update(sql, userId, friendId);
-        findById(userId).get().setFriends(getFriendsById(userId));
+        findById(userId).ifPresent(u -> u.setFriends(getFriendsById(userId)));
     }
 
     @Override
     public void confirmFriend(Integer userId, Integer friendId) {
         String sql = "UPDATE PUBLIC.FRIENDS " +
                 "SET IS_CONFIRMED = ?" +
-                "WHERE USER_ID = ? AND FRIEND_ID = ?";
+                "WHERE USER_ID = ? AND FRIEND_ID = ?;";
         jdbcTemplate.update(sql, true, userId, friendId);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
-        String sql = "DELETE FROM PUBLIC.FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        String sql = "DELETE FROM PUBLIC.FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?;";
         jdbcTemplate.update(sql, userId, friendId);
-        findById(userId).get().setFriends(getFriendsById(userId));
+        findById(userId).ifPresent(u -> u.setFriends(getFriendsById(userId)));
     }
 
     public Set<Integer> getFriendsById(Integer id) {
-        String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ?";
+        String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ?;";
         List<Integer> friends = jdbcTemplate.query(sql, (rs, rowNum) -> getFriendId(rs), id);
         return new HashSet<>(friends);
     }
@@ -125,7 +122,6 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
-        // реализуйте маппинг результата запроса в объект класса Follow
         return new User(rs.getInt("id"),
                 rs.getString("email"),
                 rs.getString("login"),

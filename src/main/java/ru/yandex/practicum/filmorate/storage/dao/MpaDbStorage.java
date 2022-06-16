@@ -24,18 +24,15 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public List<Mpa> findAll() {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.MPA ORDER BY ID";
+        String sql = "SELECT * FROM PUBLIC.MPA ORDER BY ID;";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs));
     }
 
     @Override
     public Optional<Mpa> findById(Integer id) {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.MPA WHERE ID = ?";
+        String sql = "SELECT * FROM PUBLIC.MPA WHERE ID = ?;";
         List<Mpa> mpaList = jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs), id);
 
-        // обрабатываем результат выполнения запроса
         if (mpaList.isEmpty()) {
             log.info("MPA с идентификатором {} не найден.", id);
             return Optional.empty();

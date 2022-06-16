@@ -6,6 +6,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 ТЕСТЫ ВЫПОЛНЯЮТСЯ ПОСЛЕДОВАТЕЛЬНО
  */
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -63,7 +65,7 @@ class FilmDbStorageTest {
     @DisplayName("Создание второго фильма")
     void createSecond() {
         Film film = filmDbStorage.create(new Film(null,
-                name + "2", description + "2", releaseDate.plusMonths(1), duration + 2, null, null, null));
+                name + "2", description + "2", releaseDate.plusMonths(1), duration + 2, new Mpa(1, null, null), null, null));
 
         Assertions.assertNotNull(film.getId(), "Не создан фильм!");
         Assertions.assertEquals(2, film.getId(), "Некорректное значение поле ID!");
@@ -71,7 +73,7 @@ class FilmDbStorageTest {
         Assertions.assertEquals(description + "2", film.getDescription(), "Некорректное значение поле DESCRIPTION!");
         Assertions.assertEquals(releaseDate.plusMonths(1), film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
         Assertions.assertEquals(duration + 2, film.getDuration(), "Некорректное значение поле DURATION!");
-        Assertions.assertNull(film.getMpa(), "Некорректное значение поле MPA!");
+        Assertions.assertEquals(mpa.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
         Assertions.assertNull(film.getGenres(), "Некорректное значение поле GENRES!");
     }
 

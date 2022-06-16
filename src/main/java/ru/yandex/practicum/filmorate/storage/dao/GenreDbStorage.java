@@ -24,18 +24,15 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> findAll() {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.GENRES ORDER BY ID";
+        String sql = "SELECT * FROM PUBLIC.GENRES ORDER BY ID;";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs));
     }
 
     @Override
     public Optional<Genre> findById(Integer id) {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.GENRES WHERE ID = ?";
+        String sql = "SELECT * FROM PUBLIC.GENRES WHERE ID = ?;";
         List<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), id);
 
-        // обрабатываем результат выполнения запроса
         if (genres.isEmpty()) {
             log.info("Жанр с идентификатором {} не найден.", id);
             return Optional.empty();

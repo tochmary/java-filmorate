@@ -32,8 +32,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.FILMS ORDER BY ID";
+        String sql = "SELECT * FROM PUBLIC.FILMS ORDER BY ID;";
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
         films.forEach(f -> {
             f.setLike(getLikesById(f.getId()));
@@ -44,11 +43,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> findById(Integer id) {
-        // выполняем запрос к базе данных.
-        String sql = "SELECT * FROM PUBLIC.FILMS WHERE ID = ?";
+        String sql = "SELECT * FROM PUBLIC.FILMS WHERE ID = ?;";
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
 
-        // обрабатываем результат выполнения запроса
         if (films.isEmpty()) {
             log.info("Фильм с идентификатором {} не найден.", id);
             return Optional.empty();
@@ -73,7 +70,7 @@ public class FilmDbStorage implements FilmStorage {
             ps.setString(2, film.getDescription());
             ps.setString(3, film.getReleaseDate().toString());
             ps.setInt(4, film.getDuration());
-            ps.setObject(5, film.getMpa() == null ? null : film.getMpa().getId());
+            ps.setObject(5, film.getMpa().getId());
             return ps;
         }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
@@ -86,12 +83,12 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         String sql = "UPDATE PUBLIC.FILMS " +
-                "SET NAME = ? ," +
-                "DESCRIPTION = ? ," +
-                "RELEASE_DATE = ? , " +
-                "DURATION = ? ," +
+                "SET NAME = ?, " +
+                "DESCRIPTION = ?, " +
+                "RELEASE_DATE = ?, " +
+                "DURATION = ?, " +
                 "MPA_ID = ? " +
-                "WHERE id = ? ;";
+                "WHERE id = ?;";
         jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
@@ -115,18 +112,18 @@ public class FilmDbStorage implements FilmStorage {
     public void addLike(Integer filmId, Integer userId) {
         String sql = "INSERT INTO PUBLIC.LIKES (FILM_ID, USER_ID) VALUES (?, ?);";
         jdbcTemplate.update(sql, filmId, userId);
-        findById(filmId).get().setLike(getLikesById(filmId));
+        findById(filmId).ifPresent(f -> f.setLike(getLikesById(filmId)));
     }
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
         String sql = "DELETE FROM PUBLIC.LIKES WHERE FILM_ID = ? AND USER_ID = ?;";
         jdbcTemplate.update(sql, filmId, userId);
-        findById(filmId).get().setLike(getLikesById(filmId));
+        findById(filmId).ifPresent(f -> f.setLike(getLikesById(filmId)));
     }
 
     public Set<Integer> getLikesById(Integer id) {
-        String sql = "SELECT USER_ID FROM PUBLIC.LIKES WHERE FILM_ID = ?";
+        String sql = "SELECT USER_ID FROM PUBLIC.LIKES WHERE FILM_ID = ?;";
         List<Integer> likes = jdbcTemplate.query(sql, (rs, rowNum) -> getLikeUserId(rs), id);
         return new HashSet<>(likes);
     }
@@ -134,29 +131,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public boolean isFilmExist(Integer id) {
         return findById(id).isPresent();
-    }
-
-    private Film makeFilm(ResultSet rs) throws SQLException {
-        Integer mpa_id = rs.getInt("mpa_id");
-        Mpa mpa = mpaDbStorage.findById(mpa_id).orElse(new Mpa());
-        // реализуйте маппинг результата запроса в объект класса Follow
-        return new Film(rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                rs.getDate("release_date").toLocalDate(),
-                rs.getInt("duration"),
-                mpa,
-                null,
-                null
-        );
-    }
-
-    private Integer getLikeUserId(ResultSet rs) throws SQLException {
-        return rs.getInt("user_id");
-    }
-
-    private Integer getGenreId(ResultSet rs) throws SQLException {
-        return rs.getInt("genre_id");
     }
 
     private Set<Genre> getGenresByFilmId(Integer film_id) {
@@ -176,8 +150,29 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void deleteGenres(Integer film_id) {
-        String sql = "DELETE FROM PUBLIC.FILM_GENRES WHERE FILM_ID = ?";
+        String sql = "DELETE FROM PUBLIC.FILM_GENRES WHERE FILM_ID = ?;";
         jdbcTemplate.update(sql, film_id);
     }
 
+    private Film makeFilm(ResultSet rs) throws SQLException {
+        Integer mpa_id = rs.getInt("mpa_id");
+        Mpa mpa = mpaDbStorage.findById(mpa_id).orElse(new Mpa());
+        return new Film(rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("release_date").toLocalDate(),
+                rs.getInt("duration"),
+                mpa,
+                null,
+                null
+        );
+    }
+
+    private Integer getLikeUserId(ResultSet rs) throws SQLException {
+        return rs.getInt("user_id");
+    }
+
+    private Integer getGenreId(ResultSet rs) throws SQLException {
+        return rs.getInt("genre_id");
+    }
 }
