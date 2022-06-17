@@ -25,23 +25,23 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 @Execution(SAME_THREAD)
 class UserDbStorageTest {
     private final UserDbStorage userDbStorage;
-    private final String name = "Maria";
-    private final String login = "tochmary";
-    private final String email = "maria_toch@mail.ru";
-    private final LocalDate birthday = LocalDate.of(1986, 4, 28);
+    private final static String NAME = "Maria";
+    private final static String LOGIN = "tochmary";
+    private final static String EMAIL = "maria_toch@mail.ru";
+    private final static LocalDate BIRTHDAY = LocalDate.of(1986, 4, 28);
 
     @Test
     @Order(1)
     @DisplayName("Создание пользователя")
     void create() {
-        User user = userDbStorage.create(new User(null, email, login, name, birthday, null));
+        User user = userDbStorage.create(new User(null, EMAIL, LOGIN, NAME, BIRTHDAY, null));
 
         Assertions.assertNotNull(user.getId(), "Не создан пользователь!");
         Assertions.assertEquals(1, user.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, user.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(login, user.getLogin(), "Некорректное значение поле LOGIN!");
-        Assertions.assertEquals(email, user.getEmail(), "Некорректное значение поле EMAIL!");
-        Assertions.assertEquals(birthday, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
+        Assertions.assertEquals(NAME, user.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(LOGIN, user.getLogin(), "Некорректное значение поле LOGIN!");
+        Assertions.assertEquals(EMAIL, user.getEmail(), "Некорректное значение поле EMAIL!");
+        Assertions.assertEquals(BIRTHDAY, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
     }
 
     @Test
@@ -49,14 +49,14 @@ class UserDbStorageTest {
     @DisplayName("Создание второго пользователя")
     void createSecond() {
         User user = userDbStorage.create(new User(null,
-                "Second" + email, "Second" + login, "Second" + name, birthday.plusMonths(1), null));
+                "Second" + EMAIL, "Second" + LOGIN, "Second" + NAME, BIRTHDAY.plusMonths(1), null));
 
         Assertions.assertNotNull(user.getId(), "Не создан пользователь!");
         Assertions.assertEquals(2, user.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals("Second" + name, user.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals("Second" + login, user.getLogin(), "Некорректное значение поле LOGIN!");
-        Assertions.assertEquals("Second" + email, user.getEmail(), "Некорректное значение поле EMAIL!");
-        Assertions.assertEquals(birthday.plusMonths(1), user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
+        Assertions.assertEquals("Second" + NAME, user.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals("Second" + LOGIN, user.getLogin(), "Некорректное значение поле LOGIN!");
+        Assertions.assertEquals("Second" + EMAIL, user.getEmail(), "Некорректное значение поле EMAIL!");
+        Assertions.assertEquals(BIRTHDAY.plusMonths(1), user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
     }
 
     @Test
@@ -68,10 +68,10 @@ class UserDbStorageTest {
         Assertions.assertTrue(userOptional.isPresent(), "Не найден пользователь!");
         User user = userOptional.get();
         Assertions.assertEquals(1, user.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, user.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(login, user.getLogin(), "Некорректное значение поле LOGIN!");
-        Assertions.assertEquals(email, user.getEmail(), "Некорректное значение поле EMAIL!");
-        Assertions.assertEquals(birthday, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
+        Assertions.assertEquals(NAME, user.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(LOGIN, user.getLogin(), "Некорректное значение поле LOGIN!");
+        Assertions.assertEquals(EMAIL, user.getEmail(), "Некорректное значение поле EMAIL!");
+        Assertions.assertEquals(BIRTHDAY, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
     }
 
     @Test
@@ -84,10 +84,10 @@ class UserDbStorageTest {
         Assertions.assertEquals(2, users.size(), "Некорректное общее количество пользователей!");
         User user = users.get(0);
         Assertions.assertEquals(1, user.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, user.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(login, user.getLogin(), "Некорректное значение поле LOGIN!");
-        Assertions.assertEquals(email, user.getEmail(), "Некорректное значение поле EMAIL!");
-        Assertions.assertEquals(birthday, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
+        Assertions.assertEquals(NAME, user.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(LOGIN, user.getLogin(), "Некорректное значение поле LOGIN!");
+        Assertions.assertEquals(EMAIL, user.getEmail(), "Некорректное значение поле EMAIL!");
+        Assertions.assertEquals(BIRTHDAY, user.getBirthday(), "Некорректное значение поле BIRTHDAY!");
     }
 
 

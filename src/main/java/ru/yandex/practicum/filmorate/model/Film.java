@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Film implements Comparable<Film> {
     private Integer id;
     private String name;
@@ -19,27 +23,6 @@ public class Film implements Comparable<Film> {
      * Set if user ids who liked the film
      */
     private Set<Integer> like = new HashSet<>();
-
-    public Film() {
-    }
-
-    public Film(Integer id,
-                String name,
-                String description,
-                LocalDate releaseDate,
-                Integer duration,
-                Mpa mpa,
-                Set<Genre> genres,
-                Set<Integer> like) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.mpa = mpa;
-        this.genres = genres;
-        this.like = like;
-    }
 
     public void addLike(Integer id) {
         like.add(id);

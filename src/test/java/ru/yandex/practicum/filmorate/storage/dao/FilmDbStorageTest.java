@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 class FilmDbStorageTest {
     private final FilmDbStorage filmDbStorage;
     private final UserDbStorage userDbStorage;
-    private final String name = "Titanic";
-    private final String description = "About ship Titanic";
-    private final Integer duration = 180;
-    private final LocalDate releaseDate = LocalDate.of(1998, 1, 1);
-    private final Mpa mpa = new Mpa(1, null, null);
-    private final Set<Genre> genres = Set.of(new Genre(1, null), new Genre(2, null));
+    private final static String NAME = "Titanic";
+    private final static String DESCRIPTION = "About ship Titanic";
+    private final static Integer DURATION = 180;
+    private final static LocalDate RELEASE_DATE = LocalDate.of(1998, 1, 1);
+    private final static Mpa MPA = new Mpa(1, null, null);
+    private final static Set<Genre> GENRE_SET = Set.of(new Genre(1, null), new Genre(2, null));
     private static Integer userId;
 
     @Test
@@ -45,17 +45,17 @@ class FilmDbStorageTest {
     @DisplayName("Создание фильма")
     void create() {
         Film film = filmDbStorage.create(new Film(null,
-                name, description, releaseDate, duration, mpa, genres, null));
+                NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA, GENRE_SET, null));
 
         Assertions.assertNotNull(film.getId(), "Не создан фильм!");
         Assertions.assertEquals(1, film.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, film.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(description, film.getDescription(), "Некорректное значение поле DESCRIPTION!");
-        Assertions.assertEquals(releaseDate, film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
-        Assertions.assertEquals(duration, film.getDuration(), "Некорректное значение поле DURATION!");
-        Assertions.assertEquals(mpa.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
-        Assertions.assertEquals(genres.size(), film.getGenres().size(), "Некорректное количество жанров!!");
-        Assertions.assertEquals(genres.stream().map(Genre::getId).collect(Collectors.toSet()),
+        Assertions.assertEquals(NAME, film.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(DESCRIPTION, film.getDescription(), "Некорректное значение поле DESCRIPTION!");
+        Assertions.assertEquals(RELEASE_DATE, film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
+        Assertions.assertEquals(DURATION, film.getDuration(), "Некорректное значение поле DURATION!");
+        Assertions.assertEquals(MPA.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
+        Assertions.assertEquals(GENRE_SET.size(), film.getGenres().size(), "Некорректное количество жанров!!");
+        Assertions.assertEquals(GENRE_SET.stream().map(Genre::getId).collect(Collectors.toSet()),
                 film.getGenres().stream().map(Genre::getId).collect(Collectors.toSet()),
                 "Некорректное id жанров!!");
     }
@@ -65,15 +65,15 @@ class FilmDbStorageTest {
     @DisplayName("Создание второго фильма")
     void createSecond() {
         Film film = filmDbStorage.create(new Film(null,
-                name + "2", description + "2", releaseDate.plusMonths(1), duration + 2, new Mpa(1, null, null), null, null));
+                NAME + "2", DESCRIPTION + "2", RELEASE_DATE.plusMonths(1), DURATION + 2, new Mpa(1, null, null), null, null));
 
         Assertions.assertNotNull(film.getId(), "Не создан фильм!");
         Assertions.assertEquals(2, film.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name + "2", film.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(description + "2", film.getDescription(), "Некорректное значение поле DESCRIPTION!");
-        Assertions.assertEquals(releaseDate.plusMonths(1), film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
-        Assertions.assertEquals(duration + 2, film.getDuration(), "Некорректное значение поле DURATION!");
-        Assertions.assertEquals(mpa.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
+        Assertions.assertEquals(NAME + "2", film.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(DESCRIPTION + "2", film.getDescription(), "Некорректное значение поле DESCRIPTION!");
+        Assertions.assertEquals(RELEASE_DATE.plusMonths(1), film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
+        Assertions.assertEquals(DURATION + 2, film.getDuration(), "Некорректное значение поле DURATION!");
+        Assertions.assertEquals(MPA.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
         Assertions.assertNull(film.getGenres(), "Некорректное значение поле GENRES!");
     }
 
@@ -86,13 +86,13 @@ class FilmDbStorageTest {
         Assertions.assertTrue(filmOptional.isPresent(), "Не найден фильм!");
         Film film = filmOptional.get();
         Assertions.assertEquals(1, film.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, film.getName(), "Некорректное значение поле NAME!");
-        Assertions.assertEquals(description, film.getDescription(), "Некорректное значение поле DESCRIPTION!");
-        Assertions.assertEquals(releaseDate, film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
-        Assertions.assertEquals(duration, film.getDuration(), "Некорректное значение поле DURATION!");
-        Assertions.assertEquals(mpa.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
-        Assertions.assertEquals(genres.size(), film.getGenres().size(), "Некорректное количество жанров!!");
-        Assertions.assertEquals(genres.stream().map(Genre::getId).collect(Collectors.toSet()),
+        Assertions.assertEquals(NAME, film.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(DESCRIPTION, film.getDescription(), "Некорректное значение поле DESCRIPTION!");
+        Assertions.assertEquals(RELEASE_DATE, film.getReleaseDate(), "Некорректное значение поле RELEASE_DATE!");
+        Assertions.assertEquals(DURATION, film.getDuration(), "Некорректное значение поле DURATION!");
+        Assertions.assertEquals(MPA.getId(), film.getMpa().getId(), "Некорректное значение поле MPA!");
+        Assertions.assertEquals(GENRE_SET.size(), film.getGenres().size(), "Некорректное количество жанров!!");
+        Assertions.assertEquals(GENRE_SET.stream().map(Genre::getId).collect(Collectors.toSet()),
                 film.getGenres().stream().map(Genre::getId).collect(Collectors.toSet()),
                 "Некорректное id жанров!!");
     }
@@ -107,10 +107,10 @@ class FilmDbStorageTest {
         Assertions.assertEquals(2, films.size(), "Некорректное общее количество фильмов!");
         Film film = films.get(0);
         Assertions.assertEquals(1, film.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name, film.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(NAME, film.getName(), "Некорректное значение поле NAME!");
         Film film2 = films.get(1);
         Assertions.assertEquals(2, film2.getId(), "Некорректное значение поле ID!");
-        Assertions.assertEquals(name + "2", film2.getName(), "Некорректное значение поле NAME!");
+        Assertions.assertEquals(NAME + "2", film2.getName(), "Некорректное значение поле NAME!");
 
     }
 

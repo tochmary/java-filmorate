@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaDbStorage mpaDbStorage;
@@ -125,7 +125,7 @@ public class FilmDbStorage implements FilmStorage {
     public Set<Integer> getLikesById(Integer id) {
         String sql = "SELECT USER_ID FROM PUBLIC.LIKES WHERE FILM_ID = ?;";
         List<Integer> likes = jdbcTemplate.query(sql, (rs, rowNum) -> getLikeUserId(rs), id);
-        return new HashSet<>(likes);
+        return Set.copyOf(likes);
     }
 
     @Override

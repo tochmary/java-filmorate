@@ -13,7 +13,7 @@ import java.sql.*;
 import java.util.*;
 
 @Slf4j
-@Component
+@Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -103,7 +103,7 @@ public class UserDbStorage implements UserStorage {
     public Set<Integer> getFriendsById(Integer id) {
         String sql = "SELECT FRIEND_ID FROM PUBLIC.FRIENDS WHERE USER_ID = ?;";
         List<Integer> friends = jdbcTemplate.query(sql, (rs, rowNum) -> getFriendId(rs), id);
-        return new HashSet<>(friends);
+        return Set.copyOf(friends);
     }
 
     public Boolean getStatusFriends(Integer userId, Integer friendId) {
